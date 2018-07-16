@@ -37,18 +37,24 @@ def collectInfo(fin):
             drugs[drug_name]=[drug_cost,set([id])]      
         item_line=fin.readline()
     return drugs
-             
+    
+def writeInfo(drugs,fout):
+    """
+    fin - file object for input file
+    drugs - dictionary, that contains information in the following form:
+    {drug_name: [total_cost,prescribers_ids_set],...},
+    where prescribers_ids_set is a set of id fields of people who prescribed particular drug.
+    """
+    for drug in sorted(drugs.keys(),key=lambda x:drugs[x][0],reverse=True):
+        fout.write(drug+','+str(len(drugs[drug][1]))+','+str(drugs[drug][0])+'\n')             
 
 if __name__ == "__main__":
     if len(sys.argv)!=3:
         sys.stderr("Usage: pharmacy-counting.py <input_file> <output_file> \n")
         sys.exit(-1)
-    input_file, output_file=sys.argv[1:3]
-    fin=open(input_file,'r')
-    drugs=collectInfo(fin)
-    fin.close()
-    fout=open(output_file,'w')
-    fout.write('drug_name,num_prescriber,total_cost\n')
-    for drug in sorted(drugs.keys(),key=lambda x:drugs[x][0],reverse=True):
-        fout.write(drug+','+str(len(drugs[drug][1]))+','+str(drugs[drug][0])+'\n')
-    fout.close()
+    input_file,output_file=sys.argv[1:3]
+    with open(input_file,'r') as fin:
+        drugs=collectInfo(fin)
+    with open(output_file,'w') as fout:
+        fout.write('drug_name,num_prescriber,total_cost\n')
+        writeInfo(drugs,fout)
