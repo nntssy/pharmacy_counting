@@ -47,7 +47,7 @@ if __name__ == "__main__":
     fin=open(input_file,'r')
     drugs=collectInfo(fin)
     fin.close()
-    fout=open(output_file,'r')
+    fout=open(output_file,'w')
     fout.write('drug_name,num_prescriber,total_cost\n')
     for drug in sorted(drugs.keys(),key=lambda x:drugs[x][0],reverse=True):
         fout.write(drug+','+str(len(drugs[drug][1]))+','+str(drugs[drug][0])+'\n')
