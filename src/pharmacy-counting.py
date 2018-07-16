@@ -40,12 +40,13 @@ def collectInfo(fin):
     
 def writeInfo(drugs,fout):
     """
-    fin - file object for input file
+    fout - file object for input file
     drugs - dictionary, that contains information in the following form:
     {drug_name: [total_cost,prescribers_ids_set],...},
     where prescribers_ids_set is a set of id fields of people who prescribed particular drug.
     """
-    for drug in sorted(drugs.keys(),key=lambda x:drugs[x][0],reverse=True):
+    fout.write('drug_name,num_prescriber,total_cost\n')
+    for drug in sorted(drugs.keys(),key=lambda x:(-drugs[x][0],x.strip('"'))):
         fout.write(drug+','+str(len(drugs[drug][1]))+','+str(drugs[drug][0])+'\n')             
 
 if __name__ == "__main__":
@@ -56,5 +57,4 @@ if __name__ == "__main__":
     with open(input_file,'r') as fin:
         drugs=collectInfo(fin)
     with open(output_file,'w') as fout:
-        fout.write('drug_name,num_prescriber,total_cost\n')
         writeInfo(drugs,fout)
