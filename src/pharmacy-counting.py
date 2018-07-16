@@ -4,9 +4,9 @@ def extractDrugCost(item_line):
     """
     Returns id, drug_name and drug_cost fields from a string item_line of format 'id,last_name,first_name,drug_name,cost'.
     last_name, first_name and drug_name may or may not contain '"' or ','
-    Works under assumption that id has 10 digits.
     """
-    id=item_line[:10]
+    l=item_line.find(',')
+    id=item_line[:l]
     i=item_line.rfind(',')
     drug_cost=float(item_line[i+1:])
     j=item_line[:i].rfind(',')
