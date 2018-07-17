@@ -42,11 +42,12 @@ def divideInput(fin):
             name='quotes'
         else:
             name=letter
-        with open(name+'.json','w') as fout:
+        with open(os.path.join(os.getcwd(), name+'.json')) as fout:
             json.dump(drug_groups[letter],fout)
     filenames=drug_groups.keys()[:]
-    filenames.remove('"')
-    filenames.append('quotes')
+    if '"' in filenames:
+        filenames.remove('"')
+        filenames.append('quotes')
     return filenames
 
 def collectInfoByGroup(filename):    
@@ -56,7 +57,7 @@ def collectInfoByGroup(filename):
     """
     output_list=[]
     drugs={}
-    with open(filename+'.json','r') as fin:
+    with open(os.path.join(os.getcwd(), name+'.json')) as fin:
         input_list=json.load(fin)
     for entry in input_list:
         try:
@@ -66,7 +67,7 @@ def collectInfoByGroup(filename):
             drugs[entry[1]]=[entry[2],set([entry[0]])]
     for drug in sorted(drugs.keys(),key=lambda x:(-drugs[x][0],x.strip('"'))):
         output_list.append((-float(drugs[drug][0]),str(drug.strip('"')),int(len(drugs[drug][1])),str(drug)))
-    os.remove(filename+".json")
+    os.remove(os.path.join(os.getcwd(), name+".json"))
     return output_list
     
 def collectGroups(filenames):

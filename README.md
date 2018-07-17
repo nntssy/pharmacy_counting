@@ -6,7 +6,7 @@ The solution is written in Python 2.
 
 The script `run.sh` executes the project; the input data file is `input/itcont.txt`, and the result is written into `output/top_cost_drug.txt`. Running `insight_testsuite/run_tests.sh` evaluates the solution using the tests from `insight_testsuite/tests/`.
 
-There are 2 versions of the solution: basic and with _MapReduce_. By default the basic algorithm script (`pharmacy-counting.py`) is called. To run another script(`pharmacy-counting_divide.py`), comment line 3 and uncomment line 4 in `run.sh` file.
+There are 2 versions of the solution: basic and with simulation of _MapReduce_. By default the basic algorithm script (`pharmacy-counting.py`) is called. To run another script(`pharmacy-counting_divide.py`), comment line 3 and uncomment line 4 in `run.sh` file.
 
 _**Note:**_ *to execute `run_tests.sh`, change your current_working_directory to `insight_testsuite/` first, and then call `./run_tests.sh`.*
 
