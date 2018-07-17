@@ -10,7 +10,7 @@ _**Note:**_ *to execute `run_tests.sh`, change your current_working_directory to
 ## Algorithm overview
 The algorithm reads data entries from the input file `itcont.txt` line by line, extracting required fields from each line after it is read, and adding the new data to the data structures that allow efficient computation of the required statistics.
 
-_The memory requirement of the algorithm is **O(N)**. In the worst case **N** is the total number of entries scanned so far, and all of them will need to be stored to guarantee precise calculation of the *n*-th percentile._
+The complexity of the algorithm is _**O(N)+O(M*log(M))**_, where _**N**_ is the total number of entries scanned, _**M<=N**_ is the number of unique drug names. In the worst case (when _**M=N**_) the complexity is _**O(N*log(N))**_, but if _**M<<N**_ it reduces to _**O(N)**_.
 
 The data structure used to store the drugs information is a dictionary `drugs`, that has drug names as keys and pairs (lists) `[total_cost,id_set]` as values. `total_cost` is the total cost of all prescriptions of particular drug and is updated as more and more data entries are processed. `id_set` is a set of all `id`-fields of people that prescribed this particular drug. Since it is needed to count all _unique_ prescribers for each drug name, it is checked frequently whether the current provider already prescribed it. `set()` data structure is used because, compared to list, it allows a faster check whether element is a part of the iterable or not.
 
