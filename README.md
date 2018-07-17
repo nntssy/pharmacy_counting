@@ -19,7 +19,8 @@ The data structure used to store the drugs information is a dictionary `drugs`, 
 * `id` is a row of symbols (without `,`);
 * each prescriber has their unique id, so when checking uniqueness, we can just refer to the `id` field and ignore the name of prescriber;
 * `drug_name` can contain `,` and when it does, it also has `"` in the beginning and the end;
-* `drug_cost` is a real (float) number (the input numbers can be integers, but they will be converted to floats).
+* `drug_cost` is a real (float) number (the input numbers can be integers, but they will be converted to floats);
+* if there is a tie in `total_cost`, drugs are sorted alphabetically by name (without quotes).
 
 ## Project dependencies
 My implementation only imports variables from standard Python library `sys`.
