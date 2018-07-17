@@ -47,7 +47,7 @@ def writeInfo(drugs,fout):
     """
     fout.write('drug_name,num_prescriber,total_cost\n')
     for drug in sorted(drugs.keys(),key=lambda x:(-drugs[x][0],x.strip('"'))):
-        fout.write(drug+','+str(len(drugs[drug][1]))+','+str(drugs[drug][0])+'\n')             
+        fout.write('{0},{1},{2:.2f}\n'.format(drug,len(drugs[drug][1]),drugs[drug][0]))             
 
 if __name__ == "__main__":
     if len(sys.argv)!=3:
