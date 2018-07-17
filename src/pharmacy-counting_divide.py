@@ -69,14 +69,21 @@ def collectInfoByGroup(filename):
     os.remove(filename+".json")
     return output_list
     
-def collectTotalInfo(filenames):
+def collectGroups(filenames):
     """
     filenames - list of .json files filenames, that contain input data (list of strings)
-    Returns a sorted (by cost, and name if there is a tie) list, each element of which is a tuple (drug_name,num_prescribers,total_cost). This list contains statistics obtained from whole dataset.
+    Returns a list of sorted lists, each list contains statistics obtained from each .json file.
     """
     list_of_lists=[]
     for name in filenames:
         list_of_lists.append(collectInfoByGroup(name))
+    return list_of_lists
+    
+def collectTotalInfo(list_of_lists):
+    """
+    list_of_lists - list of sorted lists, each list contains statistics obtained from each .json file
+    Returns a sorted (by cost, and name if there is a tie) list, each element of which is a tuple (drug_name,num_prescribers,total_cost). This list contains statistics obtained from whole dataset.
+    """
     sorted_list=heapq.merge(*list_of_lists)
     output_list=[]
     for item in sorted_list:
@@ -100,6 +107,7 @@ if __name__ == "__main__":
     input_file,output_file=sys.argv[1:3]
     with open(input_file,'r') as fin:
         filenames=divideInput(fin)
-    sorted_list=collectTotalInfo(filenames)
+    list_of_lists=collectGroups(filenames)
+    sorted_list=collectTotalInfo(list_of_lists)
     with open(output_file,'w') as fout:
         writeInfo(sorted_list,fout)
