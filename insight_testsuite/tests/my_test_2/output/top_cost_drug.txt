@@ -1,5 +1,5 @@
 drug_name,num_prescriber,total_cost
-"XYdrug,",79,7433.4
+"XYdrug,",79,7433.40
 AAdrug,77,6754.83
 PQdrug,69,6584.23
 ZZdrug,69,6565.88
