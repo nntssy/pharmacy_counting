@@ -20,20 +20,16 @@ The data structure used to store the drugs information is a dictionary `drugs`, 
 ## MapReduce version of the algorithm
 This version of the algorithm reads data entries from the input file `itcont.txt` line by line, extracting required fields from each line after it is read and grouping data entries (tuples `(id,drug_name,drug_cost)`) by the 1st character in the `drug_name` field. After that each group is recorded into the file `<first_character>.json` (or `quotes.json` for drug names with quotes). This allows for parallel processing of data.
 
-Each group of data entries is processed in tha same way as in the basic algorithm, which yields a number of sorted lists. Those lists are then merged into one sorted list, which represents the required statistics.
+Each group of data entries is processed in the same way as in the basic algorithm, which yields a number of sorted lists. Those lists are then merged into one sorted list, which represents the required statistics.
 
 ## Assumptions
 * input is not extremely large so that all the processed data may be stored in the RAM;
 * `id` is a row of symbols (without `,`);
 * each prescriber has their unique id, so when checking uniqueness, we can just refer to the `id` field and ignore the name of prescriber;
 * `drug_name` can contain `,` and when it does, it also has `"` in the beginning and the end;
-* `drug_cost` is a real (float) number (the input numbers can be integers, but they will be converted to floats);
+* `drug_cost` is a real (float) or integer number;
+* `drug_cost` number type (int or float) is constant through the input file;
 * if there is a tie in `total_cost`, drugs are sorted alphabetically by name (without quotes).
 
 ## Project dependencies
-My basic implementation only imports variables from standard Python library `sys`. Implementation with _Mapreduce_ requires the following Python libraries: `sys`, `os`, `json` and `heapq`.
-
-## Other
-The test proposed in the assignment was modified to fit into the format of the proposed large dataset in a way that:
-* all data entries (for input and output) start from new lines;
-* the cost values in the output are converted to floats.
+My basic implementation only imports variables from standard Python library `sys`. Implementation with _MapReduce_ simulation requires the following libraries: `sys`, `os`, `json` and `heapq`.

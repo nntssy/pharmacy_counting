@@ -1,0 +1,9 @@
+drug_name,num_prescriber,total_cost
+"XYdrug,",79,7433.4
+AAdrug,77,6754.83
+PQdrug,69,6584.23
+ZZdrug,69,6565.88
+ABdrug,70,6277.46
+XYdrug,71,5887.36
+CEdrug,71,5754.05
+MNdrug,69,5705.44

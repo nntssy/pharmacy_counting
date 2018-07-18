@@ -2,15 +2,35 @@ import sys,os
 import json
 import heapq
 
-def extractDrugCost(item_line):
+def checkCostNumType(input_file):
     """
-    Returns id, drug_name and drug_cost fields from a string item_line of format 'id,last_name,first_name,drug_name,cost'.
+    input_file - a string, a path to the input file
+    Returns True, if file contains float values of cost.  
+    """
+    with open(input_file,'r') as fin:
+        line=fin.readline()
+        line=fin.readline()
+    i=line.rfind(',')
+    drug_cost=line[i+1:]
+    if '.' in drug_cost:
+        return True
+    else:
+        return False 
+
+def extractDrugCost(item_line,isFloat):
+    """
+    item_line - a string  of format 'id,last_name,first_name,drug_name,cost'
+    isFloat - a boolean value, (True if drug_cost value is float)
+    Returns id, drug_name and drug_cost fields from item_line.
     last_name, first_name and drug_name may or may not contain '"' or ','
     """
     l=item_line.find(',')
     id=item_line[:l]
     i=item_line.rfind(',')
-    drug_cost=float(item_line[i+1:])
+    if isFloat:
+        drug_cost=float(item_line[i+1:])
+    else:
+        drug_cost=int(item_line[i+1:])
     j=item_line[:i].rfind(',')
     k=item_line[:i].rfind('"')
     if k<j:
@@ -20,9 +40,10 @@ def extractDrugCost(item_line):
         drug_name=item_line[l:k+1]
     return id,drug_name,drug_cost
     
-def divideInput(fin):
+def divideInput(fin,isFloat):
     """
     fin - file object for input file
+    isFloat - a boolean value, (True if drug_cost value is float)
     Reads input file line by line, extracts id, drug_name and drug_cost fields from each data entry and groups them (as tuples) by the first letter in the drug_name (or '"').
     Writes each group into file <letter>.json (or quotes.json for names with '"')
     Returns list of filenames created.
@@ -31,7 +52,7 @@ def divideInput(fin):
     item_line=fin.readline()
     item_line=fin.readline()
     while item_line!='':
-        id,drug_name,drug_cost=extractDrugCost(item_line)    
+        id,drug_name,drug_cost=extractDrugCost(item_line,isFloat)    
         try:
             drug_groups[drug_name[0]].append((id,drug_name,drug_cost))
         except KeyError:
@@ -42,7 +63,7 @@ def divideInput(fin):
             name='quotes'
         else:
             name=letter
-        with open(os.path.join(os.getcwd(), name+'.json')) as fout:
+        with open(os.path.join(os.getcwd(), name+'.json'),'w') as fout:
             json.dump(drug_groups[letter],fout)
     filenames=drug_groups.keys()[:]
     if '"' in filenames:
@@ -50,14 +71,15 @@ def divideInput(fin):
         filenames.append('quotes')
     return filenames
 
-def collectInfoByGroup(filename):    
+def collectInfoByGroup(filename,isFloat):    
     """
     filename - string, filename.json contains list of tuples (id,drug_name,drug_cost)
+    isFloat - a boolean value, (True if drug_cost value is float)
     Returns a sorted (by cost, and name if there is a tie) list, each element of which is a tuple (-total_cost,drug_name_without_quotes,num_prescribers, drug_name). This particular format is chosen for sorting purposes. This list contains statistics obtained from 1 .json file.
     """
     output_list=[]
     drugs={}
-    with open(os.path.join(os.getcwd(), name+'.json')) as fin:
+    with open(os.path.join(os.getcwd(), filename+'.json'),'r') as fin:
         input_list=json.load(fin)
     for entry in input_list:
         try:
@@ -65,19 +87,24 @@ def collectInfoByGroup(filename):
             drugs[entry[1]][1].add(entry[0])
         except KeyError:
             drugs[entry[1]]=[entry[2],set([entry[0]])]
-    for drug in sorted(drugs.keys(),key=lambda x:(-drugs[x][0],x.strip('"'))):
-        output_list.append((-float(drugs[drug][0]),str(drug.strip('"')),int(len(drugs[drug][1])),str(drug)))
-    os.remove(os.path.join(os.getcwd(), name+".json"))
+    if isFloat:
+        for drug in sorted(drugs.keys(),key=lambda x:(-drugs[x][0],x.strip('"'))):
+            output_list.append((-float(drugs[drug][0]),str(drug.strip('"')),int(len(drugs[drug][1])),str(drug)))
+    else:
+        for drug in sorted(drugs.keys(),key=lambda x:(-drugs[x][0],x.strip('"'))):
+            output_list.append((-int(drugs[drug][0]),str(drug.strip('"')),int(len(drugs[drug][1])),str(drug)))
+    os.remove(os.path.join(os.getcwd(), filename+".json"))
     return output_list
     
-def collectGroups(filenames):
+def collectGroups(filenames,isFloat):
     """
     filenames - list of .json files filenames, that contain input data (list of strings)
+    isFloat - a boolean value, (True if drug_cost value is float)
     Returns a list of sorted lists, each list contains statistics obtained from each .json file.
     """
     list_of_lists=[]
     for name in filenames:
-        list_of_lists.append(collectInfoByGroup(name))
+        list_of_lists.append(collectInfoByGroup(name,isFloat))
     return list_of_lists
     
 def collectTotalInfo(list_of_lists):
@@ -91,24 +118,30 @@ def collectTotalInfo(list_of_lists):
         output_list.append((item[3],item[2],-item[0]))
     return output_list
     
-def writeInfo(sorted_list,fout):
+def writeInfo(sorted_list,fout,isFloat):
     """
     fout - file object for output file
     sorted_list - a list of tuples (drug_name,num_prescribers,total_cost)
+    isFloat - a boolean value, (True if drug_cost value is float)
     This function writes the output data into the file.
     """
     fout.write('drug_name,num_prescriber,total_cost\n')
-    for entry in sorted_list:
-        fout.write('{0},{1},{2:.2f}\n'.format(entry[0],entry[1],entry[2]))
+    if isFloat:
+        for entry in sorted_list:
+            fout.write('{0},{1},{2:.2f}\n'.format(entry[0],entry[1],entry[2]))
+    else:
+        for entry in sorted_list:
+            fout.write('{0},{1},{2}\n'.format(entry[0],entry[1],entry[2]))
     
 if __name__ == "__main__":    
     if len(sys.argv)!=3:
         sys.stderr("Usage: pharmacy-counting.py <input_file> <output_file> \n")
         sys.exit(-1)
     input_file,output_file=sys.argv[1:3]
+    isFloat=checkCostNumType(input_file)
     with open(input_file,'r') as fin:
-        filenames=divideInput(fin)
-    list_of_lists=collectGroups(filenames)
+        filenames=divideInput(fin,isFloat)
+    list_of_lists=collectGroups(filenames,isFloat)
     sorted_list=collectTotalInfo(list_of_lists)
     with open(output_file,'w') as fout:
-        writeInfo(sorted_list,fout)
+        writeInfo(sorted_list,fout,isFloat)
