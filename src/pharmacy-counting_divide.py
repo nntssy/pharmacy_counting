@@ -12,10 +12,7 @@ def checkCostNumType(input_file):
         line=fin.readline()
     i=line.rfind(',')
     drug_cost=line[i+1:]
-    if '.' in drug_cost:
-        return True
-    else:
-        return False 
+    return '.' in drug_cost
 
 def extractDrugCost(item_line,isFloat):
     """
